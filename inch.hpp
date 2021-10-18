@@ -29,7 +29,8 @@ namespace inch {
     enum class Style {
         Basic,
         Masked,
-        Instant
+        Instant,
+        InstantSilent
     };
 
     class InvalidInputException : public std::exception {
@@ -184,7 +185,7 @@ namespace inch {
             return user_input;
         }
 
-        std::string instant_input() {
+        std::string instant_input(bool echo) {
             /*
             An input function that takes in a single character from the user 
             
@@ -202,7 +203,9 @@ namespace inch {
             char character = __utils::get_char();
             user_input += character;
 
-            std::cout << char(toupper(character)) << std::flush;
+            if (echo) {
+                std::cout << char(toupper(character)) << std::flush;
+            }
 
             return user_input;
         }
@@ -239,7 +242,10 @@ namespace inch {
             input_function = std::bind(input_functions::basic_input, INPUT_MASK);
             break;
         case Style::Instant:
-            input_function = input_functions::instant_input;
+            input_function = std::bind(input_functions::instant_input, true);
+            break;
+        case Style::InstantSilent:
+            input_function = std::bind(input_functions::instant_input, false);
             break;
         }
 
